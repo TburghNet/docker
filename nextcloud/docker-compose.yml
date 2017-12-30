@@ -1,0 +1,101 @@
+version: '3'
+
+services:
+  onlyoffice:
+    container_name: onlyoffice
+    image: onlyoffice/documentserver
+    stdin_open: true
+    tty: true
+    restart: always
+    ports:
+      - 9001:80
+    networks:
+      - nextcloud
+    expose:
+      - '80'
+      - '443'
+
+  nextcloud-nginx:
+    container_name: nextcloud-nginx
+    image: nginx
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - nextcloud
+    expose:
+      - '80'
+      - '443'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - app:/var/www/html
+
+  nextcloud:
+    container_name: nextcloud
+    image: nextcloud:fpm
+    stdin_open: true
+    tty: true
+    restart: always
+    ports:
+      - 9000:9000
+    expose:
+      - '80'
+      - '9000'
+    networks:
+      - nextcloud
+    volumes:
+      - app:/var/www/html
+      - plex_photos:/plex/Photos
+      - plex_television:/plex/Television
+      - plex_ota_television:/plex/OTA Television
+      - plex_movies:/plex/Movies
+
+  nextcloud-db:
+    container_name: nextcloud-db
+    image: mariadb
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - nextcloud
+    expose:
+      - '3306'
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Oy1prXIN2wI7C1TX
+      - MYSQL_PASSWORD=Xoe09b9D5MIHCJgf
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+
+  nextcloud-cron:
+    build: .
+    container_name: nextcloud-cron
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - nextcloud
+    volumes:
+      - app:/var/www/html
+      - plex_photos:/plex/Photos:ro
+      - plex_television:/plex/Television:ro
+      - plex_ota_television:/plex/OTA Television:ro
+      - plex_movies:/plex/Movies:ro
+    restart: always
+
+networks:
+  nextcloud:
+    driver: 'bridge'
+
+volumes:
+  app:
+  db:
+  plex_photos:
+    external: true
+  plex_television:
+    external: true
+  plex_ota_television:
+    external: true
+  plex_movies:
+    external: true

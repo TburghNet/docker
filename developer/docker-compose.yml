@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  gitlab:
+    container_name: gitlab
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    stdin_open: true
+    tty: true
+    hostname: 'gitlab.tburgh.net'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.tburgh.net'
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - 8000:80
+    volumes:
+      - gitlab_config:/etc/gitlab
+      - gitlab_logs:/var/log/gitlab
+      - gitlab_data:/var/opt/gitlab
+
+volumes:
+  gitlab_config:
+  gitlab_logs:
+  gitlab_data:
+
+#services:
+#  jenkins:
+#    container_name: jenkins
+#    image: jenkins/jenkins:lts
+#    stdin_open: true
+#    tty: true
+#    restart: always
+#    user: jenkins
+#    ports:
+#      - 8080:8080
+#      - 50000:50000
+#    environment:
+#      - PLEX_UID=120
+#      - PLEX_GID=127
+#    volumes:
+#      - jenkins:/var/jenkins_home
+#
+#volumes:
+#  jenkins:

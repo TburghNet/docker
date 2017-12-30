@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  plex:
+    container_name: plex
+    image: plexinc/pms-docker
+    stdin_open: true
+    tty: true
+    restart: always
+    network_mode: "host"
+    environment:
+      - PLEX_UID=120
+      - PLEX_GID=127
+    volumes:
+      - config:/config
+#      - transcode:/transcode
+      - photos:/data/Photos
+      - television:/data/Television
+      - ota_television:/data/OTA Television
+      - movies:/data/Movies
+      - music:/data/Music
+#      - letsencrypt:/letsencrypt
+    devices:
+      - "/dev/dvb/adapter0/demux0:/dev/dvb/adapter0/demux0"
+      - "/dev/dvb/adapter0/dvr0:/dev/dvb/adapter0/dvr0"
+      - "/dev/dvb/adapter0/frontend0:/dev/dvb/adapter0/frontend0"
+      - "/dev/dvb/adapter0/net0:/dev/dvb/adapter0/net0"
+
+      - "/dev/dvb/adapter1/demux0:/dev/dvb/adapter1/demux0"
+      - "/dev/dvb/adapter1/dvr0:/dev/dvb/adapter1/dvr0"
+      - "/dev/dvb/adapter1/frontend0:/dev/dvb/adapter1/frontend0"
+      - "/dev/dvb/adapter1/net0:/dev/dvb/adapter1/net0"
+
+      - "/dev/dvb/adapter2/demux0:/dev/dvb/adapter2/demux0"
+      - "/dev/dvb/adapter2/dvr0:/dev/dvb/adapter2/dvr0"
+      - "/dev/dvb/adapter2/frontend0:/dev/dvb/adapter2/frontend0"
+      - "/dev/dvb/adapter2/net0:/dev/dvb/adapter2/net0"
+
+      - "/dev/dvb/adapter3/demux0:/dev/dvb/adapter3/demux0"
+      - "/dev/dvb/adapter3/dvr0:/dev/dvb/adapter3/dvr0"
+      - "/dev/dvb/adapter3/frontend0:/dev/dvb/adapter3/frontend0"
+      - "/dev/dvb/adapter3/net0:/dev/dvb/adapter3/net0"
+
+  plexpy:
+    container_name: plexpy
+    image: linuxserver/plexpy
+    stdin_open: true
+    tty: true
+    restart: always
+    network_mode: "host"
+    environment:
+      - PGID=127
+      - PUID=120
+    volumes:
+      - plexpy:/config
+      - config:/logs:ro
+
+volumes:
+  plexpy:
+  config:
+#  transcode:
+  photos:
+  television:
+  ota_television:
+  movies:
+  music:
+#  letsencrypt:
+#    type: bind
+#    source: /etc/letsencrypt
+#    read_only: true
