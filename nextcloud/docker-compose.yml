@@ -2,8 +2,10 @@ version: '3'
 
 services:
   onlyoffice:
+    build:
+      context: .
+      dockerfile: Dockerfile-onlyoffice
     container_name: onlyoffice
-    image: onlyoffice/documentserver
     stdin_open: true
     tty: true
     restart: always
@@ -69,7 +71,9 @@ services:
       - MYSQL_USER=nextcloud
 
   nextcloud-cron:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile-cron
     container_name: nextcloud-cron
     stdin_open: true
     tty: true

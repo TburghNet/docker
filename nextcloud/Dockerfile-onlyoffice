@@ -1,0 +1,3 @@
+FROM onlyoffice/documentserver
+
+COPY fonts/* /usr/share/fonts/
