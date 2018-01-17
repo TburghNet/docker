@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   plex:
@@ -13,13 +13,11 @@ services:
       - PLEX_GID=127
     volumes:
       - config:/config
-#      - transcode:/transcode
       - photos:/data/Photos
       - television:/data/Television
       - ota_television:/data/OTA Television
       - movies:/data/Movies
       - music:/data/Music
-#      - letsencrypt:/letsencrypt
     devices:
       - "/dev/dvb/adapter0/demux0:/dev/dvb/adapter0/demux0"
       - "/dev/dvb/adapter0/dvr0:/dev/dvb/adapter0/dvr0"
@@ -58,13 +56,8 @@ services:
 volumes:
   plexpy:
   config:
-#  transcode:
   photos:
   television:
   ota_television:
   movies:
   music:
-#  letsencrypt:
-#    type: bind
-#    source: /etc/letsencrypt
-#    read_only: true

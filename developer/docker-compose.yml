@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   gitlab:
@@ -23,23 +23,3 @@ volumes:
   gitlab_config:
   gitlab_logs:
   gitlab_data:
-
-#services:
-#  jenkins:
-#    container_name: jenkins
-#    image: jenkins/jenkins:lts
-#    stdin_open: true
-#    tty: true
-#    restart: always
-#    user: jenkins
-#    ports:
-#      - 8080:8080
-#      - 50000:50000
-#    environment:
-#      - PLEX_UID=120
-#      - PLEX_GID=127
-#    volumes:
-#      - jenkins:/var/jenkins_home
-#
-#volumes:
-#  jenkins:
