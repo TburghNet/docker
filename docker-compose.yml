@@ -1,0 +1,116 @@
+version: '3.4'
+
+services:
+  #Reverse proxy for all services
+  nginx:
+    container_name: nginx
+    image: nginx
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - nextcloud
+    expose:
+      - '80'
+      - '443'
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - nextcloud_www:/var/www/nextcloud
+      - type: bind
+        source: /etc/letsencrypt
+        target: /etc/letsencrypt
+      - type: bind
+        source: /etc/nginx
+        target: /etc/nginx
+  #Nextcloud services
+  nextcloud-app:
+    container_name: nextcloud-app
+    image: nextcloud:fpm
+    stdin_open: true
+    tty: true
+    restart: always
+    expose:
+      - '9000'
+    networks:
+      - nextcloud
+    volumes:
+      - nextcloud_www:/var/www/html
+      - plex_photos:/plex/Photos
+      - plex_television:/plex/Television
+      - plex_ota_television:/plex/OTA Television
+      - plex_movies:/plex/Movies
+  nextcloud-db:
+    container_name: nextcloud-db
+    image: mariadb
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - nextcloud
+    expose:
+      - '3306'
+    volumes:
+      - nextcloud_db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Oy1prXIN2wI7C1TX
+      - MYSQL_PASSWORD=Xoe09b9D5MIHCJgf
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+  nextcloud-cron:
+    build:
+      context: nextcloud
+      dockerfile: Dockerfile-cron
+    container_name: nextcloud-cron
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - nextcloud
+    volumes:
+      - nextcloud_www:/var/www/html
+      - plex_photos:/plex/Photos:ro
+      - plex_television:/plex/Television:ro
+      - plex_ota_television:/plex/OTA Television:ro
+      - plex_movies:/plex/Movies:ro
+    restart: always
+  nextcloud-nginx:
+    container_name: nextcloud-nginx
+    image: nginx
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - nextcloud
+    expose:
+      - '80'
+    volumes:
+      - ./nextcloud/nginx.conf:/etc/nginx/nginx.conf
+      - nextcloud_www:/var/www/html
+  onlyoffice-app:
+    build:
+      context: nextcloud
+      dockerfile: Dockerfile-onlyoffice
+    container_name: onlyoffice-app
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - nextcloud
+    expose:
+      - '80'
+networks:
+  nextcloud:
+    driver: 'bridge'
+volumes:
+  nextcloud_www:
+  nextcloud_db:
+  plex_photos:
+    external: true
+  plex_television:
+    external: true
+  plex_ota_television:
+    external: true
+  plex_movies:
+    external: true

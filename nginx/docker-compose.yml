@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+  reverse_proxy:
+    container_name: nginx_reverse_proxy
+    image: nginx:latest
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      nextcloud_app:
+        aliases:
+          - nextcloud_proxy
+      plex_app:
+    expose:
+      - '80'
+      - '443'
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - nextcloud_app:/var/www/nextcloud
+      - type: bind
+        source: /etc/letsencrypt
+        target: /etc/letsencrypt
+      - type: bind
+        source: /etc/nginx
+        target: /etc/nginx
+networks:
+  nextcloud_app:
+    driver: 'bridge'
+    external: true
+  plex_app:
+    driver: 'bridge'
+    external: true
+volumes:
+  nextcloud_app:
+    external: true
